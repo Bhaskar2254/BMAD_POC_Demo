@@ -1,0 +1,214 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: e2e-flow.spec.js >> @smoke @e2e | Complete Purchase Flow >> Complete end-to-end purchase of two items
+- Location: tests\e2e-flow.spec.js:35:3
+
+# Error details
+
+```
+Error: page.fill: value: expected string, got object
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "Open Menu" [ref=e8] [cursor=pointer]
+          - img "Open Menu" [ref=e9]
+        - generic [ref=e11]: Swag Labs
+        - generic [ref=e14]: "2"
+      - generic [ref=e16]: "Checkout: Your Information"
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - textbox "First Name" [ref=e22]
+        - textbox "Last Name" [ref=e24]
+        - textbox "Zip/Postal Code" [ref=e26]
+      - generic [ref=e28]:
+        - button "Go back Cancel" [ref=e29] [cursor=pointer]:
+          - img "Go back" [ref=e30]
+          - text: Cancel
+        - button "Continue" [ref=e31] [cursor=pointer]
+  - contentinfo [ref=e32]:
+    - list [ref=e33]:
+      - listitem [ref=e34]:
+        - link "Twitter" [ref=e35] [cursor=pointer]:
+          - /url: https://twitter.com/saucelabs
+      - listitem [ref=e36]:
+        - link "Facebook" [ref=e37] [cursor=pointer]:
+          - /url: https://www.facebook.com/saucelabs
+      - listitem [ref=e38]:
+        - link "LinkedIn" [ref=e39] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/sauce-labs/
+    - generic [ref=e40]: © 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy
+```
+
+# Test source
+
+```ts
+  1   | /**
+  2   |  * Base Fixtures - Extended Playwright test fixtures
+  3   |  * 
+  4   |  * Provides:
+  5   |  * - Page objects (loginPage, inventoryPage, cartPage, checkoutPage)
+  6   |  * - Authenticated context (authenticatedPage)
+  7   |  * - Browser context with stored authentication state
+  8   |  * 
+  9   |  * Usage:
+  10  |  * test('authenticated test', async ({ authenticatedPage, inventoryPage }) => {
+  11  |  *   // User is already logged in via storageState
+  12  |  *   await inventoryPage.navigate('/inventory.html');
+  13  |  * });
+  14  |  */
+  15  | 
+  16  | import { test as baseTest, expect } from '@playwright/test';
+  17  | import { LoginPage } from '../pages/LoginPage.js';
+  18  | import { InventoryPage } from '../pages/InventoryPage.js';
+  19  | import CartPage from '../pages/CartPage.js';
+  20  | 
+  21  | /**
+  22  |  * CheckoutPage - Page Object for checkout flow
+  23  |  * (Added here as a new fixture-provided page)
+  24  |  */
+  25  | class CheckoutPage {
+  26  |   constructor(page) {
+  27  |     this.page = page;
+  28  |   }
+  29  | 
+  30  |   get firstNameInput() {
+  31  |     return 'input[data-test="firstName"]';
+  32  |   }
+  33  | 
+  34  |   get lastNameInput() {
+  35  |     return 'input[data-test="lastName"]';
+  36  |   }
+  37  | 
+  38  |   get postalCodeInput() {
+  39  |     return 'input[data-test="postalCode"]';
+  40  |   }
+  41  | 
+  42  |   get continueButton() {
+  43  |     return 'input[data-test="continue"]';
+  44  |   }
+  45  | 
+  46  |   get finishButton() {
+  47  |     return 'button[data-test="finish"]';
+  48  |   }
+  49  | 
+  50  |   get successMessage() {
+  51  |     return '.complete-header';
+  52  |   }
+  53  | 
+  54  |   async fillCheckoutInfo(firstName, lastName, postalCode) {
+> 55  |     await this.page.fill(this.firstNameInput, firstName);
+      |                     ^ Error: page.fill: value: expected string, got object
+  56  |     await this.page.fill(this.lastNameInput, lastName);
+  57  |     await this.page.fill(this.postalCodeInput, postalCode);
+  58  |   }
+  59  | 
+  60  |   // Alias expected by some tests: keep backward compatibility
+  61  |   async fillShippingInfo(firstName, lastName, postalCode) {
+  62  |     return this.fillCheckoutInfo(firstName, lastName, postalCode);
+  63  |   }
+  64  | 
+  65  |   async continueCheckout() {
+  66  |     await this.page.click(this.continueButton);
+  67  |   }
+  68  | 
+  69  |   async finishCheckout() {
+  70  |     await this.page.click(this.finishButton);
+  71  |   }
+  72  | 
+  73  |   async isSuccessDisplayed() {
+  74  |     return this.page.isVisible(this.successMessage);
+  75  |   }
+  76  | }
+  77  | 
+  78  | /**
+  79  |  * Extended test fixture with page objects and authentication
+  80  |  * 
+  81  |  * Provides both:
+  82  |  * - Unauthenticated page objects (require manual login)
+  83  |  * - Authenticated page objects (with stored session state)
+  84  |  */
+  85  | export const test = baseTest.extend({
+  86  |   /**
+  87  |    * Login Page Object
+  88  |    */
+  89  |   loginPage: async ({ page }, use) => {
+  90  |     const loginPage = new LoginPage(page);
+  91  |     await use(loginPage);
+  92  |   },
+  93  | 
+  94  |   /**
+  95  |    * Inventory Page Object
+  96  |    */
+  97  |   inventoryPage: async ({ page }, use) => {
+  98  |     const inventoryPage = new InventoryPage(page);
+  99  |     await use(inventoryPage);
+  100 |   },
+  101 | 
+  102 |   /**
+  103 |    * Cart Page Object
+  104 |    */
+  105 |   cartPage: async ({ page }, use) => {
+  106 |     const cartPage = new CartPage(page);
+  107 |     await use(cartPage);
+  108 |   },
+  109 | 
+  110 |   /**
+  111 |    * Checkout Page Object
+  112 |    */
+  113 |   checkoutPage: async ({ page }, use) => {
+  114 |     const checkoutPage = new CheckoutPage(page);
+  115 |     await use(checkoutPage);
+  116 |   },
+  117 | 
+  118 |   /**
+  119 |    * Authenticated Page - Pre-authenticated context using stored state
+  120 |    * 
+  121 |    * This fixture:
+  122 |    * - Uses storageState from global setup
+  123 |    * - User is already logged in (session persisted)
+  124 |    * - No manual login required in test
+  125 |    * 
+  126 |    * Note: Already injected by playwright.config.js in most test files
+  127 |    */
+  128 |   authenticatedPage: async ({ page }, use) => {
+  129 |     // By the time this fixture runs, storageState has already been applied
+  130 |     // by the browser context (via playwright.config.js)
+  131 |     // This fixture is mainly for clarity and documentation
+  132 |     await use(page);
+  133 |   },
+  134 | 
+  135 |   /**
+  136 |    * Page Objects with Authenticated Context
+  137 |    * Useful when you need both page objects AND pre-authenticated state
+  138 |    */
+  139 |   authenticatedInventory: async ({ page }, use) => {
+  140 |     const inventoryPage = new InventoryPage(page);
+  141 |     await use(inventoryPage);
+  142 |   },
+  143 | 
+  144 |   authenticatedCart: async ({ page }, use) => {
+  145 |     const cartPage = new CartPage(page);
+  146 |     await use(cartPage);
+  147 |   },
+  148 | 
+  149 |   authenticatedCheckout: async ({ page }, use) => {
+  150 |     const checkoutPage = new CheckoutPage(page);
+  151 |     await use(checkoutPage);
+  152 |   },
+  153 | });
+  154 | 
+  155 | /**
+```

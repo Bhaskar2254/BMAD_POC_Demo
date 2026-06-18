@@ -1,0 +1,200 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: e2e-flow.spec.js >> @smoke @e2e | Complete Purchase Flow >> Complete end-to-end purchase of two items
+- Location: tests\e2e-flow.spec.js:35:3
+
+# Error details
+
+```
+TypeError: checkoutPage.fillShippingInfo is not a function
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "Open Menu" [ref=e8] [cursor=pointer]
+          - img "Open Menu" [ref=e9]
+        - generic [ref=e11]: Swag Labs
+        - generic [ref=e14]: "2"
+      - generic [ref=e16]: "Checkout: Your Information"
+    - generic [ref=e19]:
+      - generic [ref=e20]:
+        - textbox "First Name" [ref=e22]
+        - textbox "Last Name" [ref=e24]
+        - textbox "Zip/Postal Code" [ref=e26]
+      - generic [ref=e28]:
+        - button "Go back Cancel" [ref=e29] [cursor=pointer]:
+          - img "Go back" [ref=e30]
+          - text: Cancel
+        - button "Continue" [ref=e31] [cursor=pointer]
+  - contentinfo [ref=e32]:
+    - list [ref=e33]:
+      - listitem [ref=e34]:
+        - link "Twitter" [ref=e35] [cursor=pointer]:
+          - /url: https://twitter.com/saucelabs
+      - listitem [ref=e36]:
+        - link "Facebook" [ref=e37] [cursor=pointer]:
+          - /url: https://www.facebook.com/saucelabs
+      - listitem [ref=e38]:
+        - link "LinkedIn" [ref=e39] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/sauce-labs/
+    - generic [ref=e40]: © 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy
+```
+
+# Test source
+
+```ts
+  3   |  * 
+  4   |  * Tests complete end-to-end user journey:
+  5   |  * Login → Add Products → Verify Cart → Checkout → Complete Purchase → Verify Confirmation
+  6   |  * 
+  7   |  * Uses all four page objects: LoginPage, InventoryPage, CartPage, CheckoutPage
+  8   |  */
+  9   | 
+  10  | import { test, expect } from '../src/fixtures/base.fixtures.js';
+  11  | import { allure } from 'allure-playwright';
+  12  | import fs from 'fs';
+  13  | import path from 'path';
+  14  | 
+  15  | test.describe('@smoke @e2e | Complete Purchase Flow', () => {
+  16  |   // Test data
+  17  |   const PRODUCT_ONE = 'Sauce Labs Backpack';
+  18  |   const PRODUCT_TWO = 'Sauce Labs Bike Light';
+  19  |   const TEST_USER = 'standard_user';
+  20  |   const TEST_PASSWORD = 'secret_sauce';
+  21  |   const SHIPPING_INFO = {
+  22  |     firstName: 'John',
+  23  |     lastName: 'Doe',
+  24  |     zip: '12345',
+  25  |   };
+  26  | 
+  27  |   test.beforeAll(async () => {
+  28  |     // Ensure screenshots directory exists
+  29  |     const screenshotDir = './screenshots';
+  30  |     if (!fs.existsSync(screenshotDir)) {
+  31  |       fs.mkdirSync(screenshotDir, { recursive: true });
+  32  |     }
+  33  |   });
+  34  | 
+  35  |   test('Complete end-to-end purchase of two items', async ({
+  36  |     page,
+  37  |     loginPage,
+  38  |     inventoryPage,
+  39  |     cartPage,
+  40  |     checkoutPage,
+  41  |   }) => {
+  42  |     // ========== PHASE 1: LOGIN ==========
+  43  |     await allure.step('Login to application', async () => {
+  44  |       await loginPage.goto();
+  45  |       await loginPage.login(TEST_USER, TEST_PASSWORD);
+  46  |       // Wait for navigation to inventory
+  47  |       await page.waitForURL('**/inventory.html');
+  48  |     });
+  49  | 
+  50  |     // ========== PHASE 2: ADD PRODUCTS TO CART ==========
+  51  |     await allure.step('Add first product to cart', async () => {
+  52  |       await inventoryPage.goto();
+  53  |       await inventoryPage.addProductToCart(PRODUCT_ONE);
+  54  |       
+  55  |       // Take screenshot
+  56  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  57  |       await page.screenshot({ path: `screenshots/product-1-added_${timestamp}.png` });
+  58  |     });
+  59  | 
+  60  |     await allure.step('Add second product to cart', async () => {
+  61  |       await inventoryPage.addProductToCart(PRODUCT_TWO);
+  62  |       
+  63  |       // Take screenshot
+  64  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  65  |       await page.screenshot({ path: `screenshots/product-2-added_${timestamp}.png` });
+  66  |     });
+  67  | 
+  68  |     // ========== PHASE 3: VERIFY CART COUNT ==========
+  69  |     await allure.step('Verify cart item count', async () => {
+  70  |       const cartBadge = await inventoryPage.page.locator('.shopping_cart_badge').textContent();
+  71  |       expect(cartBadge).toBe('2');
+  72  |     });
+  73  | 
+  74  |     // ========== PHASE 4: NAVIGATE TO CART AND VERIFY ITEMS ==========
+  75  |     await allure.step('Navigate to cart page', async () => {
+  76  |       await inventoryPage.navigateToCart();
+  77  |       await page.waitForURL('**/cart.html');
+  78  |     });
+  79  | 
+  80  |     await allure.step('Verify item names in cart', async () => {
+  81  |       const itemNames = await cartPage.getItemNames();
+  82  |       expect(itemNames).toContain(PRODUCT_ONE);
+  83  |       expect(itemNames).toContain(PRODUCT_TWO);
+  84  |     });
+  85  | 
+  86  |     await allure.step('Verify cart item count in cart page', async () => {
+  87  |       const count = await cartPage.getCartItemCount();
+  88  |       expect(count).toBe(2);
+  89  |       
+  90  |       // Take screenshot
+  91  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  92  |       await page.screenshot({ path: `screenshots/cart-items_${timestamp}.png` });
+  93  |     });
+  94  | 
+  95  |     // ========== PHASE 5: PROCEED TO CHECKOUT ==========
+  96  |     await allure.step('Proceed to checkout', async () => {
+  97  |       await cartPage.proceedToCheckout();
+  98  |       await page.waitForURL('**/checkout-step-one.html');
+  99  |     });
+  100 | 
+  101 |     // ========== PHASE 6: FILL SHIPPING INFORMATION ==========
+  102 |     await allure.step('Fill shipping information', async () => {
+> 103 |       await checkoutPage.fillShippingInfo(SHIPPING_INFO);
+      |                          ^ TypeError: checkoutPage.fillShippingInfo is not a function
+  104 |       
+  105 |       // Take screenshot
+  106 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  107 |       await page.screenshot({ path: `screenshots/checkout-step-1_${timestamp}.png` });
+  108 |     });
+  109 | 
+  110 |     // ========== PHASE 7: CONTINUE TO ORDER SUMMARY ==========
+  111 |     await allure.step('Continue to order summary', async () => {
+  112 |       await checkoutPage.continueToSummary();
+  113 |       await page.waitForURL('**/checkout-step-two.html');
+  114 |     });
+  115 | 
+  116 |     // ========== PHASE 8: VERIFY ORDER TOTAL ==========
+  117 |     await allure.step('Verify order total contains dollar sign', async () => {
+  118 |       const orderTotal = await checkoutPage.getOrderTotal();
+  119 |       expect(orderTotal).toContain('$');
+  120 |       
+  121 |       // Take screenshot
+  122 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  123 |       await page.screenshot({ path: `screenshots/order-summary_${timestamp}.png` });
+  124 |     });
+  125 | 
+  126 |     // ========== PHASE 9: COMPLETE ORDER ==========
+  127 |     await allure.step('Complete order', async () => {
+  128 |       await checkoutPage.completeOrder();
+  129 |       await page.waitForURL('**/checkout-complete.html');
+  130 |     });
+  131 | 
+  132 |     // ========== PHASE 10: VERIFY CONFIRMATION MESSAGE ==========
+  133 |     await allure.step('Verify confirmation message', async () => {
+  134 |       const confirmationMessage = await checkoutPage.getConfirmationMessage();
+  135 |       expect(confirmationMessage).toContain('THANK YOU FOR YOUR ORDER');
+  136 |       
+  137 |       // Take screenshot
+  138 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  139 |       await page.screenshot({ path: `screenshots/order-complete_${timestamp}.png` });
+  140 |     });
+  141 |   });
+  142 | });
+  143 | 
+```

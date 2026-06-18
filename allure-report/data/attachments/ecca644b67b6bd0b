@@ -1,0 +1,279 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: e2e-flow.spec.js >> @smoke @e2e | Complete Purchase Flow >> Complete end-to-end purchase of two items
+- Location: tests\e2e-flow.spec.js:35:3
+
+# Error details
+
+```
+TypeError: inventoryPage.navigateToCart is not a function
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - button "Open Menu" [ref=e8] [cursor=pointer]
+          - img "Open Menu" [ref=e9]
+        - generic [ref=e11]: Swag Labs
+        - generic [ref=e14]: "2"
+      - generic [ref=e15]:
+        - generic [ref=e16]: Products
+        - generic [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: Name (A to Z)
+          - combobox [ref=e20]:
+            - option "Name (A to Z)" [selected]
+            - option "Name (Z to A)"
+            - option "Price (low to high)"
+            - option "Price (high to low)"
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - link "Sauce Labs Backpack" [ref=e27] [cursor=pointer]:
+          - /url: "#"
+          - img "Sauce Labs Backpack" [ref=e28]
+        - generic [ref=e29]:
+          - generic [ref=e30]:
+            - link "Sauce Labs Backpack" [ref=e31] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e32]: Sauce Labs Backpack
+            - generic [ref=e33]: carry.allTheThings() with the sleek, streamlined Sly Pack that melds uncompromising style with unequaled laptop and tablet protection.
+          - generic [ref=e34]:
+            - generic [ref=e35]: $29.99
+            - button "Remove" [ref=e36] [cursor=pointer]
+      - generic [ref=e37]:
+        - link "Sauce Labs Bike Light" [ref=e39] [cursor=pointer]:
+          - /url: "#"
+          - img "Sauce Labs Bike Light" [ref=e40]
+        - generic [ref=e41]:
+          - generic [ref=e42]:
+            - link "Sauce Labs Bike Light" [ref=e43] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e44]: Sauce Labs Bike Light
+            - generic [ref=e45]: A red light isn't the desired state in testing but it sure helps when riding your bike at night. Water-resistant with 3 lighting modes, 1 AAA battery included.
+          - generic [ref=e46]:
+            - generic [ref=e47]: $9.99
+            - button "Remove" [ref=e48] [cursor=pointer]
+      - generic [ref=e49]:
+        - link "Sauce Labs Bolt T-Shirt" [ref=e51] [cursor=pointer]:
+          - /url: "#"
+          - img "Sauce Labs Bolt T-Shirt" [ref=e52]
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - link "Sauce Labs Bolt T-Shirt" [ref=e55] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e56]: Sauce Labs Bolt T-Shirt
+            - generic [ref=e57]: Get your testing superhero on with the Sauce Labs bolt T-shirt. From American Apparel, 100% ringspun combed cotton, heather gray with red bolt.
+          - generic [ref=e58]:
+            - generic [ref=e59]: $15.99
+            - button "Add to cart" [ref=e60] [cursor=pointer]
+      - generic [ref=e61]:
+        - link "Sauce Labs Fleece Jacket" [ref=e63] [cursor=pointer]:
+          - /url: "#"
+          - img "Sauce Labs Fleece Jacket" [ref=e64]
+        - generic [ref=e65]:
+          - generic [ref=e66]:
+            - link "Sauce Labs Fleece Jacket" [ref=e67] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e68]: Sauce Labs Fleece Jacket
+            - generic [ref=e69]: It's not every day that you come across a midweight quarter-zip fleece jacket capable of handling everything from a relaxing day outdoors to a busy day at the office.
+          - generic [ref=e70]:
+            - generic [ref=e71]: $49.99
+            - button "Add to cart" [ref=e72] [cursor=pointer]
+      - generic [ref=e73]:
+        - link "Sauce Labs Onesie" [ref=e75] [cursor=pointer]:
+          - /url: "#"
+          - img "Sauce Labs Onesie" [ref=e76]
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - link "Sauce Labs Onesie" [ref=e79] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e80]: Sauce Labs Onesie
+            - generic [ref=e81]: Rib snap infant onesie for the junior automation engineer in development. Reinforced 3-snap bottom closure, two-needle hemmed sleeved and bottom won't unravel.
+          - generic [ref=e82]:
+            - generic [ref=e83]: $7.99
+            - button "Add to cart" [ref=e84] [cursor=pointer]
+      - generic [ref=e85]:
+        - link "Test.allTheThings() T-Shirt (Red)" [ref=e87] [cursor=pointer]:
+          - /url: "#"
+          - img "Test.allTheThings() T-Shirt (Red)" [ref=e88]
+        - generic [ref=e89]:
+          - generic [ref=e90]:
+            - link "Test.allTheThings() T-Shirt (Red)" [ref=e91] [cursor=pointer]:
+              - /url: "#"
+              - generic [ref=e92]: Test.allTheThings() T-Shirt (Red)
+            - generic [ref=e93]: This classic Sauce Labs t-shirt is perfect to wear when cozying up to your keyboard to automate a few tests. Super-soft and comfy ringspun combed cotton.
+          - generic [ref=e94]:
+            - generic [ref=e95]: $15.99
+            - button "Add to cart" [ref=e96] [cursor=pointer]
+  - contentinfo [ref=e97]:
+    - list [ref=e98]:
+      - listitem [ref=e99]:
+        - link "Twitter" [ref=e100] [cursor=pointer]:
+          - /url: https://twitter.com/saucelabs
+      - listitem [ref=e101]:
+        - link "Facebook" [ref=e102] [cursor=pointer]:
+          - /url: https://www.facebook.com/saucelabs
+      - listitem [ref=e103]:
+        - link "LinkedIn" [ref=e104] [cursor=pointer]:
+          - /url: https://www.linkedin.com/company/sauce-labs/
+    - generic [ref=e105]: © 2026 Sauce Labs. All Rights Reserved. Terms of Service | Privacy Policy
+```
+
+# Test source
+
+```ts
+  1   | /**
+  2   |  * E2E Flow Test - Complete Purchase Journey
+  3   |  * 
+  4   |  * Tests complete end-to-end user journey:
+  5   |  * Login → Add Products → Verify Cart → Checkout → Complete Purchase → Verify Confirmation
+  6   |  * 
+  7   |  * Uses all four page objects: LoginPage, InventoryPage, CartPage, CheckoutPage
+  8   |  */
+  9   | 
+  10  | import { test, expect } from '../src/fixtures/base.fixtures.js';
+  11  | import { allure } from 'allure-playwright';
+  12  | import fs from 'fs';
+  13  | import path from 'path';
+  14  | 
+  15  | test.describe('@smoke @e2e | Complete Purchase Flow', () => {
+  16  |   // Test data
+  17  |   const PRODUCT_ONE = 'Sauce Labs Backpack';
+  18  |   const PRODUCT_TWO = 'Sauce Labs Bike Light';
+  19  |   const TEST_USER = 'standard_user';
+  20  |   const TEST_PASSWORD = 'secret_sauce';
+  21  |   const SHIPPING_INFO = {
+  22  |     firstName: 'John',
+  23  |     lastName: 'Doe',
+  24  |     zip: '12345',
+  25  |   };
+  26  | 
+  27  |   test.beforeAll(async () => {
+  28  |     // Ensure screenshots directory exists
+  29  |     const screenshotDir = './screenshots';
+  30  |     if (!fs.existsSync(screenshotDir)) {
+  31  |       fs.mkdirSync(screenshotDir, { recursive: true });
+  32  |     }
+  33  |   });
+  34  | 
+  35  |   test('Complete end-to-end purchase of two items', async ({
+  36  |     page,
+  37  |     loginPage,
+  38  |     inventoryPage,
+  39  |     cartPage,
+  40  |     checkoutPage,
+  41  |   }) => {
+  42  |     // ========== PHASE 1: LOGIN ==========
+  43  |     await allure.step('Login to application', async () => {
+  44  |       await loginPage.goto();
+  45  |       await loginPage.login(TEST_USER, TEST_PASSWORD);
+  46  |       // Wait for navigation to inventory
+  47  |       await page.waitForURL('**/inventory.html');
+  48  |     });
+  49  | 
+  50  |     // ========== PHASE 2: ADD PRODUCTS TO CART ==========
+  51  |     await allure.step('Add first product to cart', async () => {
+  52  |       await inventoryPage.goto();
+  53  |       await inventoryPage.addProductToCart(PRODUCT_ONE);
+  54  |       
+  55  |       // Take screenshot
+  56  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  57  |       await page.screenshot({ path: `screenshots/product-1-added_${timestamp}.png` });
+  58  |     });
+  59  | 
+  60  |     await allure.step('Add second product to cart', async () => {
+  61  |       await inventoryPage.addProductToCart(PRODUCT_TWO);
+  62  |       
+  63  |       // Take screenshot
+  64  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  65  |       await page.screenshot({ path: `screenshots/product-2-added_${timestamp}.png` });
+  66  |     });
+  67  | 
+  68  |     // ========== PHASE 3: VERIFY CART COUNT ==========
+  69  |     await allure.step('Verify cart item count', async () => {
+  70  |       const cartBadge = await inventoryPage.page.locator('.shopping_cart_badge').textContent();
+  71  |       expect(cartBadge).toBe('2');
+  72  |     });
+  73  | 
+  74  |     // ========== PHASE 4: NAVIGATE TO CART AND VERIFY ITEMS ==========
+  75  |     await allure.step('Navigate to cart page', async () => {
+> 76  |       await inventoryPage.navigateToCart();
+      |                           ^ TypeError: inventoryPage.navigateToCart is not a function
+  77  |       await page.waitForURL('**/cart.html');
+  78  |     });
+  79  | 
+  80  |     await allure.step('Verify item names in cart', async () => {
+  81  |       const itemNames = await cartPage.getItemNames();
+  82  |       expect(itemNames).toContain(PRODUCT_ONE);
+  83  |       expect(itemNames).toContain(PRODUCT_TWO);
+  84  |     });
+  85  | 
+  86  |     await allure.step('Verify cart item count in cart page', async () => {
+  87  |       const count = await cartPage.getCartItemCount();
+  88  |       expect(count).toBe(2);
+  89  |       
+  90  |       // Take screenshot
+  91  |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  92  |       await page.screenshot({ path: `screenshots/cart-items_${timestamp}.png` });
+  93  |     });
+  94  | 
+  95  |     // ========== PHASE 5: PROCEED TO CHECKOUT ==========
+  96  |     await allure.step('Proceed to checkout', async () => {
+  97  |       await cartPage.proceedToCheckout();
+  98  |       await page.waitForURL('**/checkout-step-one.html');
+  99  |     });
+  100 | 
+  101 |     // ========== PHASE 6: FILL SHIPPING INFORMATION ==========
+  102 |     await allure.step('Fill shipping information', async () => {
+  103 |       await checkoutPage.fillShippingInfo(SHIPPING_INFO);
+  104 |       
+  105 |       // Take screenshot
+  106 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  107 |       await page.screenshot({ path: `screenshots/checkout-step-1_${timestamp}.png` });
+  108 |     });
+  109 | 
+  110 |     // ========== PHASE 7: CONTINUE TO ORDER SUMMARY ==========
+  111 |     await allure.step('Continue to order summary', async () => {
+  112 |       await checkoutPage.continueToSummary();
+  113 |       await page.waitForURL('**/checkout-step-two.html');
+  114 |     });
+  115 | 
+  116 |     // ========== PHASE 8: VERIFY ORDER TOTAL ==========
+  117 |     await allure.step('Verify order total contains dollar sign', async () => {
+  118 |       const orderTotal = await checkoutPage.getOrderTotal();
+  119 |       expect(orderTotal).toContain('$');
+  120 |       
+  121 |       // Take screenshot
+  122 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  123 |       await page.screenshot({ path: `screenshots/order-summary_${timestamp}.png` });
+  124 |     });
+  125 | 
+  126 |     // ========== PHASE 9: COMPLETE ORDER ==========
+  127 |     await allure.step('Complete order', async () => {
+  128 |       await checkoutPage.completeOrder();
+  129 |       await page.waitForURL('**/checkout-complete.html');
+  130 |     });
+  131 | 
+  132 |     // ========== PHASE 10: VERIFY CONFIRMATION MESSAGE ==========
+  133 |     await allure.step('Verify confirmation message', async () => {
+  134 |       const confirmationMessage = await checkoutPage.getConfirmationMessage();
+  135 |       expect(confirmationMessage).toContain('THANK YOU FOR YOUR ORDER');
+  136 |       
+  137 |       // Take screenshot
+  138 |       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  139 |       await page.screenshot({ path: `screenshots/order-complete_${timestamp}.png` });
+  140 |     });
+  141 |   });
+  142 | });
+  143 | 
+```

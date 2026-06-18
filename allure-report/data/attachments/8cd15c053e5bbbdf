@@ -1,0 +1,224 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: cart\checkout.spec.js >> Shopping Cart - SauceDemo >> @regression | Calculate cart total
+- Location: tests\cart\checkout.spec.js:45:3
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded while running "beforeEach" hook.
+```
+
+```
+TimeoutError: locator.click: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('.inventory_item').nth(1).locator('button[data-test*="add-to-cart"]')
+    - locator resolved to <button id="add-to-cart-sauce-labs-bike-light" name="add-to-cart-sauce-labs-bike-light" data-test="add-to-cart-sauce-labs-bike-light" class="btn btn_primary btn_small btn_inventory ">Add to cart</button>
+  - attempting click action
+    - waiting for element to be visible, enabled and stable
+
+```
+
+# Test source
+
+```ts
+  1   | import { BasePage } from './BasePage.js';
+  2   | 
+  3   | /**
+  4   |  * InventoryPage - Page Object for SauceDemo inventory/products page
+  5   |  */
+  6   | export class InventoryPage extends BasePage {
+  7   | 
+  8   |   // Selectors
+  9   |   // Selectors as getters
+  10  |   get productItems() {
+  11  |     return '.inventory_item';
+  12  |   }
+  13  | 
+  14  |   get sortDropdown() {
+  15  |     return '.product_sort_container';
+  16  |   }
+  17  | 
+  18  |   get cartBadge() {
+  19  |     return '.shopping_cart_badge';
+  20  |   }
+  21  | 
+  22  |   get cartLink() {
+  23  |     return 'a.shopping_cart_link';
+  24  |   }
+  25  | 
+  26  |   get container() {
+  27  |     return '.inventory_container';
+  28  |   }
+  29  | 
+  30  |   get inventoryItems() {
+  31  |     return '.inventory_item';
+  32  |   }
+  33  | 
+  34  |   get inventoryItemNames() {
+  35  |     return '.inventory_item_name';
+  36  |   }
+  37  | 
+  38  |   get addToCartButtons() {
+  39  |     return 'button[data-test*="add-to-cart"]';
+  40  |   }
+  41  | 
+  42  |   get cartBadge() {
+  43  |     return '.shopping_cart_badge';
+  44  |   }
+  45  | 
+  46  |   get cartLink() {
+  47  |     return 'a.shopping_cart_link';
+  48  |   }
+  49  | 
+  50  |   get sortDropdown() {
+  51  |     return '[data-test="product-sort-container"]';
+  52  |   }
+  53  | 
+  54  |   /**
+  55  |    * Navigate to inventory page
+  56  |    */
+  57  |   async goto() {
+  58  |     await super.goto('/inventory.html');
+  59  |   }
+  60  | 
+  61  |   /**
+  62  |    * Get count of inventory items
+  63  |    * @returns {Promise<number>}
+  64  |    */
+  65  |   async getItemCount() {
+  66  |     const items = await this.page.locator(this.inventoryItems).count();
+  67  |     return items;
+  68  |   }
+  69  | 
+  70  |   /**
+  71  |    * Get all product names
+  72  |    * @returns {Promise<string[]>}
+  73  |    */
+  74  |   async getAllProductNames() {
+  75  |     const names = await this.page.locator(this.inventoryItemNames).allTextContents();
+  76  |     return names;
+  77  |   }
+  78  | 
+  79  |   /**
+  80  |    * Add product to cart by name
+  81  |    * @param {string} productName
+  82  |    */
+  83  |   async addProductToCart(productName) {
+  84  |     const locator = this.page.locator(this.inventoryItems);
+  85  |     const count = await locator.count();
+  86  | 
+  87  |     for (let i = 0; i < count; i++) {
+  88  |       const item = locator.nth(i);
+  89  |       const name = await item.locator('.inventory_item_name').textContent();
+  90  | 
+  91  |       if (name.trim() === productName) {
+> 92  |         await item.locator('button[data-test*="add-to-cart"]').click();
+      |                                                                ^ TimeoutError: locator.click: Timeout 10000ms exceeded.
+  93  |         return;
+  94  |       }
+  95  |     }
+  96  | 
+  97  |     throw new Error(`Product "${productName}" not found`);
+  98  |   }
+  99  | 
+  100 |   /**
+  101 |    * Get cart item count from badge
+  102 |    * @returns {Promise<string>}
+  103 |    */
+  104 |   async getCartBadgeCount() {
+  105 |     return this.getText(this.cartBadge);
+  106 |   }
+  107 | 
+  108 |   /**
+  109 |    * Check if cart badge is visible
+  110 |    * @returns {Promise<boolean>}
+  111 |    */
+  112 |   async isCartBadgeVisible() {
+  113 |     return this.isVisible(this.cartBadge);
+  114 |   }
+  115 | 
+  116 |   /**
+  117 |    * Click on cart link to navigate to cart
+  118 |    */
+  119 |   async goToCart() {
+  120 |     await this.click(this.cartLink);
+  121 |   }
+  122 | 
+  123 |   /**
+  124 |    * Sort products by option
+  125 |    * @param {string} option - e.g., 'az', 'za', 'lohi', 'hilo'
+  126 |    */
+  127 |   async sortBy(option) {
+  128 |     await this.click(this.sortDropdown);
+  129 |     await this.click(`[data-test-id="${option}"]`);
+  130 |   }
+  131 | 
+  132 |   /**
+  133 |    * Check if inventory page is loaded
+  134 |    * @returns {Promise<boolean>}
+  135 |    */
+  136 |   async isPageLoaded() {
+  137 |     return this.isVisible(this.container);
+  138 |   }
+  139 | 
+  140 |   /**
+  141 |    * Add item to cart by product name
+  142 |    * @param {string} productName
+  143 |    */
+  144 |   async addItemToCart(productName) {
+  145 |     const items = await this.page.locator(this.productItems).all();
+  146 | 
+  147 |     for (const item of items) {
+  148 |       const name = await item.locator('.inventory_item_name').textContent();
+  149 |       if (name?.trim() === productName) {
+  150 |         await item.locator('button[data-test*="add-to-cart"]').click();
+  151 |         return;
+  152 |       }
+  153 |     }
+  154 | 
+  155 |     throw new Error(`Product "${productName}" not found`);
+  156 |   }
+  157 | 
+  158 |   /**
+  159 |    * Remove item from cart by product name
+  160 |    * @param {string} productName
+  161 |    */
+  162 |   async removeItemFromCart(productName) {
+  163 |     const items = await this.page.locator(this.productItems).all();
+  164 | 
+  165 |     for (const item of items) {
+  166 |       const name = await item.locator('.inventory_item_name').textContent();
+  167 |       if (name?.trim() === productName) {
+  168 |         await item.locator('button[data-test*="remove"]').click();
+  169 |         return;
+  170 |       }
+  171 |     }
+  172 | 
+  173 |     throw new Error(`Product "${productName}" not found`);
+  174 |   }
+  175 | 
+  176 |   /**
+  177 |    * Sort products by option
+  178 |    * @param {string} option - e.g., 'az', 'za', 'lohi', 'hilo'
+  179 |    */
+  180 |   async sortBy(option) {
+  181 |     await this.click(this.sortDropdown);
+  182 |     await this.page.selectOption(this.sortDropdown + ' select', option);
+  183 |   }
+  184 | 
+  185 |   /**
+  186 |    * Get count of products on the page
+  187 |    * @returns {Promise<number>}
+  188 |    */
+  189 |   async getProductCount() {
+  190 |     return this.page.locator(this.productItems).count();
+  191 |   }
+  192 | 
+```

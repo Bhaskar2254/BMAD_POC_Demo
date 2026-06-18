@@ -1,0 +1,111 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: authenticated.spec.js >> Authenticated - Direct Feature Testing >> @smoke | Navigate to inventory when already authenticated
+- Location: tests\authenticated.spec.js:17:3
+
+# Error details
+
+```
+Error: expect(received).toBeTruthy()
+
+Received: false
+```
+
+# Test source
+
+```ts
+  1  | /**
+  2  |  * Authenticated Tests - Using Pre-Authenticated Context
+  3  |  * 
+  4  |  * These tests use storageState saved during global-setup.js
+  5  |  * No manual login required - user is already authenticated
+  6  |  * 
+  7  |  * Benefits:
+  8  |  * - Faster test execution (skip login each time)
+  9  |  * - More reliable (login happens once in setup)
+  10 |  * - Focus on testing features, not authentication
+  11 |  */
+  12 | 
+  13 | import { test, expect } from '../src/fixtures/base.fixtures.js';
+  14 | import { testData } from '../src/helpers/testData.js';
+  15 | 
+  16 | test.describe('Authenticated - Direct Feature Testing', () => {
+  17 |   test('@smoke | Navigate to inventory when already authenticated', async ({
+  18 |     inventoryPage,
+  19 |     page,
+  20 |   }) => {
+  21 |     // Arrange - User is already logged in via storageState
+  22 |     // No manual login needed!
+  23 | 
+  24 |     // Act
+  25 |     await inventoryPage.goto();
+  26 | 
+  27 |     // Assert
+> 28 |     expect(await inventoryPage.isPageLoaded()).toBeTruthy();
+     |                                                ^ Error: expect(received).toBeTruthy()
+  29 |     const url = await page.url();
+  30 |     expect(url).toContain('inventory');
+  31 |   });
+  32 | 
+  33 |   test('@regression | Add products from authenticated state', async ({
+  34 |     inventoryPage,
+  35 |     cartPage,
+  36 |   }) => {
+  37 |     // Arrange - Already authenticated
+  38 |     await inventoryPage.goto();
+  39 | 
+  40 |     // Act
+  41 |     await inventoryPage.addProductToCart(testData.products.backpack);
+  42 |     await inventoryPage.addProductToCart(testData.products.bike_light);
+  43 | 
+  44 |     // Assert
+  45 |     const badgeCount = await inventoryPage.getCartBadgeCount();
+  46 |     expect(badgeCount).toContain('2');
+  47 | 
+  48 |     // Verify in cart
+  49 |     await inventoryPage.goToCart();
+  50 |     const itemCount = await cartPage.getCartItemCount();
+  51 |     expect(itemCount).toBe(2);
+  52 |   });
+  53 | 
+  54 |   test('@regression | Complete checkout flow', async ({
+  55 |     inventoryPage,
+  56 |     cartPage,
+  57 |     checkoutPage,
+  58 |   }) => {
+  59 |     // Arrange - Already authenticated
+  60 |     await inventoryPage.goto();
+  61 |     await inventoryPage.addProductToCart(testData.products.backpack);
+  62 |     await inventoryPage.goToCart();
+  63 | 
+  64 |     // Act - Proceed to checkout
+  65 |     await cartPage.checkout();
+  66 | 
+  67 |     // Fill checkout info
+  68 |     await checkoutPage.fillCheckoutInfo('John', 'Doe', '12345');
+  69 |     await checkoutPage.continueCheckout();
+  70 | 
+  71 |     // Complete purchase
+  72 |     await checkoutPage.finishCheckout();
+  73 | 
+  74 |     // Assert
+  75 |     expect(await checkoutPage.isSuccessDisplayed()).toBeTruthy();
+  76 |   });
+  77 | 
+  78 |   test('Verify cart is empty before starting', async ({ cartPage }) => {
+  79 |     // Arrange & Act
+  80 |     await cartPage.goto();
+  81 | 
+  82 |     // Assert
+  83 |     const isEmpty = await cartPage.isCartEmpty();
+  84 |     expect(isEmpty).toBeTruthy();
+  85 |   });
+  86 | });
+  87 | 
+```

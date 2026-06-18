@@ -1,0 +1,118 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: auth\login.spec.js >> Login - SauceDemo >> Login page displays required elements
+- Location: tests\auth\login.spec.js:59:3
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+Error: expect(received).toBeTruthy()
+
+Received: false
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - generic [ref=e4]: Swag Labs
+  - generic [ref=e5]:
+    - generic [ref=e9]:
+      - textbox "Username" [ref=e11]
+      - textbox "Password" [ref=e13]
+      - button "Login" [ref=e15] [cursor=pointer]
+    - generic [ref=e17]:
+      - generic [ref=e18]:
+        - heading "Accepted usernames are:" [level=4] [ref=e19]
+        - text: standard_user
+        - text: locked_out_user
+        - text: problem_user
+        - text: performance_glitch_user
+        - text: error_user
+        - text: visual_user
+      - generic [ref=e20]:
+        - heading "Password for all users:" [level=4] [ref=e21]
+        - text: secret_sauce
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '../../src/fixtures/testFixtures.js';
+  2  | import { testData } from '../../src/helpers/testData.js';
+  3  | 
+  4  | /**
+  5  |  * Login Tests - @smoke @sanity
+  6  |  */
+  7  | 
+  8  | test.describe('Login - SauceDemo', () => {
+  9  |   test.beforeEach(async ({ loginPage }) => {
+  10 |     await loginPage.goto();
+  11 |   });
+  12 | 
+  13 |   test('@smoke @sanity | Successful login with valid credentials', async ({
+  14 |     loginPage,
+  15 |     inventoryPage,
+  16 |   }) => {
+  17 |     // Arrange
+  18 |     const { username, password } = testData.users.standard_user;
+  19 | 
+  20 |     // Act
+  21 |     await loginPage.login(username, password);
+  22 | 
+  23 |     // Assert
+  24 |     expect(await inventoryPage.isPageLoaded()).toBeTruthy();
+  25 |     const url = await inventoryPage.getCurrentURL();
+  26 |     expect(url).toContain('inventory');
+  27 |   });
+  28 | 
+  29 |   test('@sanity | Login fails with invalid password', async ({ loginPage }) => {
+  30 |     // Arrange
+  31 |     const { username } = testData.users.standard_user;
+  32 | 
+  33 |     // Act
+  34 |     await loginPage.login(username, 'wrong_password');
+  35 | 
+  36 |     // Assert
+  37 |     const errorVisible = await loginPage.isErrorDisplayed();
+  38 |     expect(errorVisible).toBeTruthy();
+  39 | 
+  40 |     const errorText = await loginPage.getErrorMessage();
+  41 |     expect(errorText).toContain('Username and password do not match');
+  42 |   });
+  43 | 
+  44 |   test('@sanity | Login fails with locked out user', async ({ loginPage }) => {
+  45 |     // Arrange
+  46 |     const { username, password } = testData.users.locked_user;
+  47 | 
+  48 |     // Act
+  49 |     await loginPage.login(username, password);
+  50 | 
+  51 |     // Assert
+  52 |     const errorVisible = await loginPage.isErrorDisplayed();
+  53 |     expect(errorVisible).toBeTruthy();
+  54 | 
+  55 |     const errorText = await loginPage.getErrorMessage();
+  56 |     expect(errorText).toContain('locked out');
+  57 |   });
+  58 | 
+  59 |   test('Login page displays required elements', async ({ loginPage, page }) => {
+  60 |     // Assert
+> 61 |     expect(await page.isVisible(loginPage.usernameInput)).toBeTruthy();
+     |                                                           ^ Error: expect(received).toBeTruthy()
+  62 |     expect(await page.isVisible(loginPage.passwordInput)).toBeTruthy();
+  63 |     expect(await page.isVisible(loginPage.loginButton)).toBeTruthy();
+  64 |   });
+  65 | });
+  66 | 
+```

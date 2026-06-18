@@ -1,0 +1,105 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: cart\checkout.spec.js >> Shopping Cart - SauceDemo >> @regression | Remove item from cart
+- Location: tests\cart\checkout.spec.js:30:3
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded while running "beforeEach" hook.
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '../../src/fixtures/testFixtures.js';
+  2  | import { testData, calculateTotal } from '../../src/helpers/testData.js';
+  3  | 
+  4  | /**
+  5  |  * Shopping Cart Tests - @smoke @regression
+  6  |  */
+  7  | 
+  8  | test.describe('Shopping Cart - SauceDemo', () => {
+> 9  |   test.beforeEach(async ({ loginPage, inventoryPage }) => {
+     |        ^ Test timeout of 60000ms exceeded while running "beforeEach" hook.
+  10 |     await loginPage.goto();
+  11 |     await loginPage.login(testData.users.standard_user.username, testData.users.standard_user.password);
+  12 |     //await inventoryPage.waitForPageLoad();
+  13 |     await inventoryPage.isPageLoaded();
+  14 | 
+  15 |     // Add products to cart
+  16 |     await inventoryPage.addProductToCart(testData.products.backpack);
+  17 |     await inventoryPage.addProductToCart(testData.products.bike_light);
+  18 |   });
+  19 | 
+  20 |   test('@smoke | View cart with items', async ({ inventoryPage, cartPage }) => {
+  21 |     // Act
+  22 |     await inventoryPage.goToCart();
+  23 | 
+  24 |     // Assert
+  25 |     expect(await cartPage.isPageLoaded()).toBeTruthy();
+  26 |     const itemCount = await cartPage.getCartItemCount();
+  27 |     expect(itemCount).toBe(2);
+  28 |   });
+  29 | 
+  30 |   test('@regression | Remove item from cart', async ({ inventoryPage, cartPage }) => {
+  31 |     // Arrange
+  32 |     await inventoryPage.goToCart();
+  33 | 
+  34 |     // Act
+  35 |     await cartPage.removeItem(testData.products.backpack);
+  36 | 
+  37 |     // Assert
+  38 |     const itemCount = await cartPage.getCartItemCount();
+  39 |     expect(itemCount).toBe(1);
+  40 | 
+  41 |     const itemNames = await cartPage.getAllItemNames();
+  42 |     expect(itemNames).not.toContain(testData.products.backpack);
+  43 |   });
+  44 | 
+  45 |   test('@regression | Calculate cart total', async ({ inventoryPage, cartPage }) => {
+  46 |     // Arrange
+  47 |     await inventoryPage.goToCart();
+  48 | 
+  49 |     // Act
+  50 |     const prices = await cartPage.getAllItemPrices();
+  51 |     const cartTotal = await cartPage.calculateTotal();
+  52 | 
+  53 |     // Assert
+  54 |     expect(prices).toHaveLength(2);
+  55 |     expect(prices[0]).toBe(testData.prices.backpack);
+  56 |     expect(prices[1]).toBe(testData.prices.bike_light);
+  57 |     expect(cartTotal).toBe(testData.prices.backpack + testData.prices.bike_light);
+  58 |   });
+  59 | 
+  60 |   test('Continue shopping from cart', async ({ inventoryPage, cartPage }) => {
+  61 |     // Arrange
+  62 |     await inventoryPage.goToCart();
+  63 | 
+  64 |     // Act
+  65 |     await cartPage.continueShopping();
+  66 | 
+  67 |     // Assert
+  68 |     expect(await inventoryPage.isPageLoaded()).toBeTruthy();
+  69 |   });
+  70 | 
+  71 |   test('Proceed to checkout from cart', async ({ inventoryPage, cartPage }) => {
+  72 |     // Arrange
+  73 |     await inventoryPage.goToCart();
+  74 | 
+  75 |     // Act
+  76 |     await cartPage.checkout();
+  77 | 
+  78 |     // Assert
+  79 |     const url = await cartPage.getCurrentURL();
+  80 |     expect(url).toContain('checkout');
+  81 |   });
+  82 | });
+  83 | 
+```

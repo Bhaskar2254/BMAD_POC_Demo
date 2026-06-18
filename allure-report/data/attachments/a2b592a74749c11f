@@ -1,0 +1,155 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: auth\login.spec.js >> Login - SauceDemo >> @smoke @sanity | Successful login with valid credentials
+- Location: tests\auth\login.spec.js:13:3
+
+# Error details
+
+```
+Test timeout of 60000ms exceeded.
+```
+
+```
+TimeoutError: page.fill: Timeout 10000ms exceeded.
+Call log:
+  - waiting for locator('input[data-test="username"]')
+
+```
+
+# Test source
+
+```ts
+  1   | /**
+  2   |  * BasePage - Abstract base class for all page objects
+  3   |  * 
+  4   |  * Provides common functionality for all pages:
+  5   |  * - Navigation
+  6   |  * - Element interactions
+  7   |  * - Waits and assertions
+  8   |  * - Screenshot capture
+  9   |  * - Error handling
+  10  |  */
+  11  | export class BasePage {
+  12  |   constructor(page) {
+  13  |     this.page = page;
+  14  |   }
+  15  | 
+  16  |   /**
+  17  |    * Navigate to a URL (relative to baseURL in config)
+  18  |    * @param {string} path - Relative path or absolute URL
+  19  |    */
+  20  |   async goto(path = '') {
+  21  |     await this.page.goto(path, { waitUntil: 'networkidle' });
+  22  |   }
+  23  | 
+  24  |   /**
+  25  |    * Click an element
+  26  |    * @param {string} selector - CSS selector
+  27  |    * @param {object} options - Playwright click options
+  28  |    */
+  29  |   async click(selector, options = {}) {
+  30  |     await this.page.click(selector, options);
+  31  |   }
+  32  | 
+  33  |   /**
+  34  |    * Fill an input field
+  35  |    * @param {string} selector - CSS selector
+  36  |    * @param {string} text - Text to enter
+  37  |    */
+  38  |   async fillInput(selector, text) {
+> 39  |     await this.page.fill(selector, text);
+      |                     ^ TimeoutError: page.fill: Timeout 10000ms exceeded.
+  40  |   }
+  41  | 
+  42  |   /**
+  43  |    * Get text from an element
+  44  |    * @param {string} selector - CSS selector
+  45  |    * @returns {Promise<string>} Element text content
+  46  |    */
+  47  |   async getText(selector) {
+  48  |     return this.page.textContent(selector);
+  49  |   }
+  50  | 
+  51  |   /**
+  52  |    * Check if element is visible
+  53  |    * @param {string} selector - CSS selector
+  54  |    * @returns {Promise<boolean>}
+  55  |    */
+  56  |   async isVisible(selector) {
+  57  |     return this.page.isVisible(selector);
+  58  |   }
+  59  | 
+  60  |   /**
+  61  |    * Wait for element to be visible
+  62  |    * @param {string} selector - CSS selector
+  63  |    * @param {number} timeout - Timeout in ms
+  64  |    */
+  65  |   async waitForVisible(selector, timeout = 10000) {
+  66  |     await this.page.waitForSelector(selector, { state: 'visible', timeout });
+  67  |   }
+  68  | 
+  69  |   /**
+  70  |    * Wait for element to be hidden
+  71  |    * @param {string} selector - CSS selector
+  72  |    * @param {number} timeout - Timeout in ms
+  73  |    */
+  74  |   async waitForHidden(selector, timeout = 10000) {
+  75  |     await this.page.waitForSelector(selector, { state: 'hidden', timeout });
+  76  |   }
+  77  | 
+  78  |   /**
+  79  |    * Take screenshot for debugging
+  80  |    * @param {string} filename - Screenshot filename
+  81  |    */
+  82  |   async takeScreenshot(filename) {
+  83  |     await this.page.screenshot({ path: `screenshots/${filename}.png` });
+  84  |   }
+  85  | 
+  86  |   /**
+  87  |    * Get page title
+  88  |    * @returns {Promise<string>}
+  89  |    */
+  90  |   async getPageTitle() {
+  91  |     return this.page.title();
+  92  |   }
+  93  | 
+  94  |   /**
+  95  |    * Get current URL
+  96  |    * @returns {Promise<string>}
+  97  |    */
+  98  |   async getCurrentURL() {
+  99  |     return this.page.url();
+  100 |   }
+  101 | 
+  102 |   /**
+  103 |    * Switch to new tab/window
+  104 |    * @returns {Promise<Page>}
+  105 |    */
+  106 |   async switchToNewTab() {
+  107 |     const context = this.page.context();
+  108 |     const newPage = await context.waitForEvent('page');
+  109 |     return newPage;
+  110 |   }
+  111 | 
+  112 |   /**
+  113 |    * Close current page
+  114 |    */
+  115 |   async close() {
+  116 |     await this.page.close();
+  117 |   }
+  118 | 
+  119 |   /**
+  120 |    * Reload page
+  121 |    */
+  122 |   async reload() {
+  123 |     await this.page.reload();
+  124 |   }
+  125 | }
+  126 | 
+```
