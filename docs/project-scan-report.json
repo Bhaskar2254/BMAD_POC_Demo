@@ -1,0 +1,59 @@
+{
+    "mode":  "initial_scan",
+    "completed_steps":  [
+                            {
+                                "summary":  "Loaded documentation requirements",
+                                "step":  "step_0.5",
+                                "status":  "completed"
+                            },
+                            {
+                                "summary":  "Project classified as Test Automation Framework (Playwright)",
+                                "step":  "step_1",
+                                "status":  "completed"
+                            },
+                            {
+                                "summary":  "Found 7 existing markdown docs",
+                                "step":  "step_2",
+                                "status":  "completed"
+                            },
+                            {
+                                "summary":  "Tech stack: Playwright 1.61.0+, Node.js 18+",
+                                "step":  "step_3",
+                                "status":  "completed"
+                            },
+                            {
+                                "summary":  "Generated comprehensive documentation",
+                                "step":  "step_4",
+                                "status":  "completed"
+                            }
+                        ],
+    "current_step":  "complete",
+    "findings":  {
+                     "repository_type":  "monolith",
+                     "primary_language":  "JavaScript",
+                     "project_type":  "web-test-automation",
+                     "primary_framework":  "Playwright Test",
+                     "tech_stack":  "Node.js, Playwright 1.61.0+, ESLint, Prettier, Allure"
+                 },
+    "workflow_version":  "1.2.0",
+    "project_root":  "d:\\project\\FirstDemoProject",
+    "project_knowledge":  "d:\\project\\FirstDemoProject\\docs",
+    "timestamps":  {
+                       "started":  "2026-06-22T10:34:18.1507217+05:30",
+                       "completed":  "2026-06-22T10:34:18.1507217+05:30",
+                       "last_updated":  "2026-06-22T10:34:18.1507217+05:30"
+                   },
+    "scan_level":  "quick",
+    "outputs_generated":  [
+                              "docs/index.md",
+                              "docs/project-overview.md",
+                              "docs/technology-stack.md",
+                              "docs/source-tree.md",
+                              "docs/test-framework-guide.md",
+                              "docs/page-objects.md",
+                              "docs/test-data-fixtures.md",
+                              "docs/api-contracts-main.md",
+                              "project-scan-report.json"
+                          ],
+    "status":  "completed"
+}
